@@ -99,6 +99,58 @@ defmodule SoggyHedgehogRamlTest do
   end
 
 
+  test "parsing an endpoint with type" do
+    raml = """
+    #%RAML 1.0
+    title: New Control API
+    version: v1
+    baseUri: http://localhost
+    types:
+      Broadcast:
+        type: object
+        properties:
+          id: number
+          title: string
+          summary: string
+          deleted: number
+    /broadcasts:
+      get:
+        queryParameters:
+          tag:
+            type: string
+          page:
+            type: integer
+          startDate:
+            type: datetime
+          notRequired:
+            type: string[]
+        responses:
+          200:
+            body:
+              application/json:
+                type: Broadcast[]
+      post:
+        body:
+          application/json:
+            type: broadcasts
+    """
+
+    {:ok, data} = SoggyHedgehog.Raml.parse raml
+    assert Map.has_key? data.types, :Broadcast
+
+    assert Map.has_key? data.types[:Broadcast], :type
+    assert data.types[:Broadcast].type == "object"
+
+    assert Map.has_key? data.types[:Broadcast], :properties
+    assert map_size(data.types[:Broadcast].properties) == 4
+    assert data.types[:Broadcast].properties[:id] == "number"
+    assert data.types[:Broadcast].properties[:title] == "string"
+    assert data.types[:Broadcast].properties[:summary] == "string"
+    assert data.types[:Broadcast].properties[:deleted] == "number"
+
+    assert Map.has_key? data, :endpoints
+  end
+
   defp print_keys(map) do
     map |> Map.keys |> Enum.map(&Atom.to_string/1) |> Enum.join(", ") |> IO.puts
   end

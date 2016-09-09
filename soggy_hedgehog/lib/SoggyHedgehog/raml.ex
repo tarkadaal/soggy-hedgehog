@@ -1,5 +1,4 @@
 defmodule SoggyHedgehog.Raml do
-
   def parse("") do
     {:error, "Can't parse an empty string"}
   end
@@ -35,14 +34,13 @@ defmodule SoggyHedgehog.Raml do
   end
 
   defp _parse([{:types}, token | lines], data) do
-    endpoint? = hd(token) == "/"
-    if endpoint? do
-      _parse([token | lines], data)
-    else
-      atom_token = token |> hd |> atomize
-      data = put_in(data, [:types, atom_token], %{})
-      _parse([{:types, atom_token} | lines], data)
-    end
+    atom_token = token |> hd |> atomize
+    data = put_in(data, [:types, atom_token], %{})
+    _parse([{:types, atom_token} | lines], data)
+  end
+
+  defp _parse([state, ["/" <> endpoint | rest] | lines], data) when is_tuple(state) and elem(state,0) == :types do  
+    _parse([{:endpoints}, ["/" <> endpoint | rest] | lines], data)
   end
 
   defp _parse([{:types, typename}, [ "\t\ttype:" | value] | lines], data) do
@@ -64,8 +62,12 @@ defmodule SoggyHedgehog.Raml do
   end
 
   defp _parse([{:types, typename, :properties}, [key | value] | lines], data) do
-    data = put_in(data, [:types, typename, :properties, atomize(key)], hd(value))
+    data = put_in_safely(data, [:types, typename, :properties, atomize(key)], hd(value))
     _parse([{:types, typename, :properties} | lines], data)
+  end
+
+  defp _parse([{:endpoints}, endpoint | lines], data) do
+    data = put_in_safely(data, [:endpoints, endpoint], %{})
   end
 
   defp _parse([_ | lines], data) do
@@ -76,4 +78,24 @@ defmodule SoggyHedgehog.Raml do
     str |> String.trim |> String.replace_trailing(":", "") |> String.to_atom
   end
 
+  defp put_in_safely(target, path, item) do
+    target = _build_map_path(target, path)
+    put_in(target, path, item)
+  end
+
+  defp _build_map_path(target, path, processed \\ [])
+
+  defp _build_map_path(target, [_ | []], _) do
+    target
+  end
+
+  defp _build_map_path(target, [current | rest], processed) do
+    reversed = Enum.reverse([current | processed])
+    target = if get_in(target, reversed) == nil do
+      put_in(target, reversed, %{})
+    else
+      target
+    end
+    _build_map_path(target, rest, [current | processed])
+  end
 end
