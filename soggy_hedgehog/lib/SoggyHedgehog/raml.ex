@@ -11,71 +11,29 @@ defmodule SoggyHedgehog.Raml do
     {:ok, _parse(lines)}
   end
 
-  defp _parse(lines, data \\ %{})
+  defp _parse(lines, state \\ [], data \\ %{})
 
-  defp _parse([], data) do
+  defp _parse([], _, data) do
     data
   end
 
-  defp _parse([["title:" | value] | lines], data) do
-    _parse(lines, Map.put(data, :title, hd(value)))
+  defp _parse([["#%RAML", "1.0"] | lines], state, data) do
+    _parse(lines, state, data)
   end
 
-  defp _parse([["version:" | value] | lines], data) do
-    _parse(lines, Map.put(data, :version, hd(value)))
+  defp _parse([[key | []]| lines], state, data) do 
+    if string_depth(key) < length(state) do
+      _parse([[key | []]| lines], tl(state), data)
+    else
+      _parse(lines, [String.trim(key) | state], data)
+    end
   end
 
-  defp _parse([["baseUri:" | value] | lines], data) do
-    _parse(lines, Map.put(data, :base_uri, hd(value)))
-  end
-
-  defp _parse([["types:" | _] | lines], data) do
-    _parse([{:types} | lines], Map.put(data, :types, %{}))
-  end
-
-  defp _parse([{:types}, token | lines], data) do
-    atom_token = token |> hd |> atomize
-    data = put_in(data, [:types, atom_token], %{})
-    _parse([{:types, atom_token} | lines], data)
-  end
-
-  defp _parse([state, ["/" <> endpoint | rest] | lines], data) when is_tuple(state) and elem(state,0) == :types do  
-    _parse([{:endpoints}, ["/" <> endpoint | rest] | lines], data)
-  end
-
-  defp _parse([{:types, typename}, [ "\t\ttype:" | value] | lines], data) do
-    data = put_in(data, [:types, typename, :type], hd(value))
-    _parse([{:types, typename}| lines], data)
-  end
-
-  defp _parse([{:types, typename}, [ "\t\tproperties:" | _] | lines], data) do
-    data = put_in(data, [:types, typename, :properties], %{})
-    _parse([{:types, typename, :properties} | lines], data)
-  end
-
-  defp _parse([{:types, _, :properties}, _], data) do
-    data
-  end
-
-  defp _parse([{:types, _, :properties}, [key | []] | lines], data) do
-    _parse([{:types}, [key | []] | lines], data)
-  end
-
-  defp _parse([{:types, typename, :properties}, [key | value] | lines], data) do
-    data = put_in_safely(data, [:types, typename, :properties, atomize(key)], hd(value))
-    _parse([{:types, typename, :properties} | lines], data)
-  end
-
-  defp _parse([{:endpoints}, endpoint | lines], data) do
-    data = put_in_safely(data, [:endpoints, endpoint], %{})
-  end
-
-  defp _parse([_ | lines], data) do
-    _parse(lines, data)
-  end
-
-  defp atomize(str) do
-    str |> String.trim |> String.replace_trailing(":", "") |> String.to_atom
+  defp _parse([[key , value]|lines], state, data) do
+    key = String.trim key
+    value = String.trim value
+    data = put_in_safely(data, Enum.reverse([key | state]), value)
+    _parse(lines, state, data)
   end
 
   defp put_in_safely(target, path, item) do
@@ -91,11 +49,20 @@ defmodule SoggyHedgehog.Raml do
 
   defp _build_map_path(target, [current | rest], processed) do
     reversed = Enum.reverse([current | processed])
-    target = if get_in(target, reversed) == nil do
-      put_in(target, reversed, %{})
-    else
-      target
-    end
+    target = if (get_in(target, reversed) == nil), do: put_in(target, reversed, %{}), else: target
     _build_map_path(target, rest, [current | processed])
   end
+
+  defp string_depth(str, depth \\ 0)
+  defp string_depth(<<>>, depth) do
+    depth
+  end
+  defp string_depth(<<9::utf8, rest:: binary>>, depth) do
+    string_depth(rest, depth + 1)
+  end
+  defp string_depth(_, depth) do
+    depth
+  end
+
+
 end

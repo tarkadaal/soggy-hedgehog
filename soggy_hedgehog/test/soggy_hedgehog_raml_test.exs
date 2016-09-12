@@ -11,22 +11,22 @@ defmodule SoggyHedgehogRamlTest do
   test "basic parsing" do
     raml = """
     #%RAML 1.0
-    title: New Control API
+    title: New Application API
     version: v1
     baseUri: http://localhost
     """
 
 
     {:ok, data} = SoggyHedgehog.Raml.parse raml
-    assert "New Control API" == data.title
-    assert "v1" == data.version
-    assert "http://localhost" == data.base_uri
+    assert "New Application API" == data["title:"]
+    assert "v1" == data["version:"]
+    assert "http://localhost" == data["baseUri:"]
   end
 
   test "parsing a type" do
     raml = """
     #%RAML 1.0
-    title: New Control API
+    title: New Application API
     version: v1
     baseUri: http://localhost
     types:
@@ -40,23 +40,23 @@ defmodule SoggyHedgehogRamlTest do
     """
 
     {:ok, data} = SoggyHedgehog.Raml.parse raml
-    assert Map.has_key? data.types, :Broadcast
+    assert Map.has_key? data["types:"], "Broadcast:"
 
-    assert Map.has_key? data.types[:Broadcast], :type
-    assert data.types[:Broadcast].type == "object"
+    assert Map.has_key? data["types:"]["Broadcast:"], "type:"
+    assert data["types:"]["Broadcast:"]["type:"] == "object"
 
-    assert Map.has_key? data.types[:Broadcast], :properties
-    assert map_size(data.types[:Broadcast].properties) == 4
-    assert data.types[:Broadcast].properties[:id] == "number"
-    assert data.types[:Broadcast].properties[:title] == "string"
-    assert data.types[:Broadcast].properties[:summary] == "string"
-    assert data.types[:Broadcast].properties[:deleted] == "number"
+    assert Map.has_key? data["types:"]["Broadcast:"], "properties:"
+    assert map_size(data["types:"]["Broadcast:"]["properties:"]) == 4
+    assert data["types:"]["Broadcast:"]["properties:"]["id:"] == "number"
+    assert data["types:"]["Broadcast:"]["properties:"]["title:"] == "string"
+    assert data["types:"]["Broadcast:"]["properties:"]["summary:"] == "string"
+    assert data["types:"]["Broadcast:"]["properties:"]["deleted:"] == "number"
   end
 
   test "parsing types" do
     raml = """
     #%RAML 1.0
-    title: New Control API
+    title: New Application API
     version: v1
     baseUri: http://localhost
     types:
@@ -82,19 +82,19 @@ defmodule SoggyHedgehogRamlTest do
     """
 
     {:ok, data} = SoggyHedgehog.Raml.parse raml
-    assert Map.has_key? data.types, :Broadcast
+    assert Map.has_key? data["types:"], "Broadcast:"
 
-    assert Map.has_key? data.types[:Broadcast], :type
-    assert data.types[:Broadcast].type == "object"
+    assert Map.has_key? data["types:"]["Broadcast:"], "type:"
+    assert data["types:"]["Broadcast:"]["type:"] == "object"
 
-    assert Map.has_key? data.types[:Broadcast], :properties
-    assert map_size(data.types[:Broadcast].properties) == 4
+    assert Map.has_key? data["types:"]["Broadcast:"], "properties:"
+    assert map_size(data["types:"]["Broadcast:"]["properties:"]) == 4
 
-    assert Map.has_key? data.types, :Document
-    assert data.types[:Document].type == "object"
-    assert Map.has_key? data.types, :Comment
-    assert data.types[:Comment].properties[:fixme] == "string"
-    assert Map.has_key? data.types, :Channel
+    assert Map.has_key? data["types:"], "Document:"
+    assert data["types:"]["Document:"]["type:"] == "object"
+    assert Map.has_key? data["types:"], "Comment:"
+    assert data["types:"]["Comment:"]["properties:"]["fixme:"] == "string"
+    assert Map.has_key? data["types:"], "Channel:"
 
   end
 
@@ -102,7 +102,7 @@ defmodule SoggyHedgehogRamlTest do
   test "parsing an endpoint with type" do
     raml = """
     #%RAML 1.0
-    title: New Control API
+    title: New Application API
     version: v1
     baseUri: http://localhost
     types:
@@ -136,22 +136,22 @@ defmodule SoggyHedgehogRamlTest do
     """
 
     {:ok, data} = SoggyHedgehog.Raml.parse raml
-    assert Map.has_key? data.types, :Broadcast
+    assert Map.has_key? data["types:"], "Broadcast:"
 
-    assert Map.has_key? data.types[:Broadcast], :type
-    assert data.types[:Broadcast].type == "object"
+    assert Map.has_key? data["types:"]["Broadcast:"], "type:"
+    assert data["types:"]["Broadcast:"]["type:"] == "object"
 
-    assert Map.has_key? data.types[:Broadcast], :properties
-    assert map_size(data.types[:Broadcast].properties) == 4
-    assert data.types[:Broadcast].properties[:id] == "number"
-    assert data.types[:Broadcast].properties[:title] == "string"
-    assert data.types[:Broadcast].properties[:summary] == "string"
-    assert data.types[:Broadcast].properties[:deleted] == "number"
+    assert Map.has_key? data["types:"]["Broadcast:"], "properties:"
+    assert map_size(data["types:"]["Broadcast:"]["properties:"]) == 4
+    assert data["types:"]["Broadcast:"]["properties:"]["id:"] == "number"
+    assert data["types:"]["Broadcast:"]["properties:"]["title:"] == "string"
+    assert data["types:"]["Broadcast:"]["properties:"]["summary:"] == "string"
+    assert data["types:"]["Broadcast:"]["properties:"]["deleted:"] == "number"
 
-    assert Map.has_key? data, :endpoints
+    assert Map.has_key? data, "/broadcasts:"
+    assert map_size(data["/broadcasts:"]) == 2
+    assert data["/broadcasts:"]["get:"]["queryParameters:"]["startDate:"]["type:"] == "datetime"
+    
   end
 
-  defp print_keys(map) do
-    map |> Map.keys |> Enum.map(&Atom.to_string/1) |> Enum.join(", ") |> IO.puts
-  end
 end
