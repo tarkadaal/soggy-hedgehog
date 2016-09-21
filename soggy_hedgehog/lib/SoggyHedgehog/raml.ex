@@ -11,6 +11,8 @@ defmodule SoggyHedgehog.Raml do
     {:ok, _parse(lines)}
   end
 
+
+
   defp _parse(lines, state \\ [], data \\ %{})
 
   defp _parse([], _, data) do
@@ -36,10 +38,14 @@ defmodule SoggyHedgehog.Raml do
     _parse(lines, state, data)
   end
 
+
+
   defp put_in_safely(target, path, item) do
     target = _build_map_path(target, path)
     put_in(target, path, item)
   end
+
+
 
   defp _build_map_path(target, path, processed \\ [])
 
@@ -53,13 +59,19 @@ defmodule SoggyHedgehog.Raml do
     _build_map_path(target, rest, [current | processed])
   end
 
+
+
   defp string_depth(str, depth \\ 0)
+
   defp string_depth(<<>>, depth) do
     depth
   end
+
+  # "9" is the utf8 tab character
   defp string_depth(<<9::utf8, rest:: binary>>, depth) do
     string_depth(rest, depth + 1)
   end
+
   defp string_depth(_, depth) do
     depth
   end

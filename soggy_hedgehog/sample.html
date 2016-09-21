@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="sample.css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto" rel="stylesheet">
+		<title>
+			Replacement API
+		</title>
+	</head>
+	<body>
+		<h1>Replacement API</h1>
+		<h5>BaseURI: http://www.thereplacement.com</h5>
+		<h2>Types</h2>
+			<p class="typename">Broadcast</p>
+			<p class="description">
+				This represents a broadcast that either has been or will be sent to a customer.
+			</p>
+			<p class="properties">Properties</p>
+			<p class="property"><span class="property-name">Title</span><span class="property-type">string</span></p>
+			<p class="property"><span class="property-name">ID</span><span class="property-type">number</span></p>
+			<p class="property"><span class="property-name">IsPublic</span><span class="property-type">boolean</span></p>
+		<h2>Endpoints</h2>
+		<div class="endpoint">
+			<p class="endpoint-name">/broadcasts</p>
+			<div class="http-get">
+				<p class="http-get-label">get</p>
+				<p class="parameters">Parameters</p>
+				<p><span class="parameter-name">tag</span><span class="parameter-type">string</span></p>
+				<p><span class="parameter-name">page</span><span class="parameter-type">integer</span></p>
+				<p class="responses">Responses</p>
+				<p class="response-code">200</p>
+				<p class="body">body</p>
+				<p class="mimetype">application/json</p>
+				<p><span class="user-type-name">type</span><span class="user-type"> Broadcast</span></p>
+				<p class="response-code">400</p>
+			</div>
+			<div class="endpoint">
+				<p class="endpoint-name">/{id}</p>
+			</div>
+
+		</div>
+	</body>
+</html>

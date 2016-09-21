@@ -1,0 +1,211 @@
+#%RAML 1.0
+title: New Control API
+version: v1
+baseUri: http://localhost
+types:
+  Broadcast:
+    type: object
+    properties:
+      id: number
+      title: string
+      summary: string
+      deleted: number
+      live: number
+      ipadioref: string
+      latitude: string
+      longitude: number
+      postcode: string
+      isPublic: boolean
+      showOnChannel: number
+      showOnEmbed: number
+      allowComments: number
+      emailComments: number
+      mp3Filename: string
+      mp3Location:  string
+      duration: number
+      mp3FilenameOrig: string
+      mp3LocationOrig: string
+      mp3DurationOrig: number 
+      autoTranscript: string
+      autoTags: string
+      locationText: string
+      titleSource: string
+      tagSource: string
+      summarySource: string
+      documents: Document[]
+      comments: Comment[]
+  Document:
+    type: object
+    properties:
+      fixme: string
+  Comment:
+    type: object
+    properties:
+      fixme: string
+  Channel:
+    type: object
+    properties:
+      fixme: string
+  Interaction:
+    type: object
+    properties:
+      fixme: string
+  LockStatus:
+    type: object
+    properties:
+      locked: boolean
+  Audit:
+    type: object
+    properties:
+      data: string # base64 encoded data
+  CommsSchedule:
+    type: object
+    properties:
+      fixme: string
+
+
+/broadcasts:
+  get:
+    queryParameters:
+      tag:
+        type: string
+      page:
+        type: integer
+      items:
+        type: integer
+      startDate:
+        type: datetime
+      endDate:
+        type: datetime
+      imageWidth:
+        type: integer
+      imageHeight:
+        type: integer
+      priority:
+        type: integer
+      notRequired:
+        type: string[]
+    responses:
+      200:
+        body:
+          application/json:
+            type: Broadcast[]
+  post:
+    body:
+      application/json:
+        type: Broadcast
+  /{id}:
+    delete:
+    put:
+      body:
+        application/json:
+          type: Broadcast
+    get:
+      queryParameters:
+        startDate:
+          type: datetime
+        endDate:
+          type: datetime
+        showPrivate:
+          type: boolean
+        videoFormat:
+          type: string
+        lockRequired:
+          type: boolean
+        lockLengthMinutes:
+          type: integer
+      responses:
+        200:
+          body:
+            application/json:
+              type: Broadcast
+    /interactions:
+      get:
+        queryParameters:
+          page:
+            type: integer
+          items:
+            type: integer
+          orderBy:
+            type: string
+          action:
+            type: string
+          search:
+            type: string
+          xmlDataFilters:
+            type: string
+        responses:
+          200:
+            body:
+              application/json:
+                type: [Interaction]
+    /togglelock:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: LockStatus
+      put:
+        body:
+          application/json:
+            type: LockStatus
+    /audit:
+      get:
+        queryParameters:
+          historyDays:
+            type: integer
+        responses:
+          200:
+            body:
+              application/json:
+                type: Audit
+    /commsschedule:
+      get:
+        queryParameters:
+          page:
+            type: integer
+          items:
+            type: integer
+        responses:
+          200:
+            body:
+              application/json:
+                type: CommsSchedule
+
+/channels:
+  get:
+    queryParameters:
+      imageWidth:
+        type: integer
+      imageHeight:
+        type: integer
+    responses:
+      200:
+        body:
+          application/json:
+            type: Channel[]
+  post:
+    body:
+      application/json:
+        type:
+          Channel
+  /{id}:
+    delete:
+    get:
+      queryParameters:
+        imageWidth:
+          type: integer
+        imageHeight:
+          type: integer
+        disableInheritance:
+          type: boolean
+      responses:
+        200:
+          body:
+            application/json:
+              type: Channel
+    put:
+      body:
+        application/json:
+          type: Channel

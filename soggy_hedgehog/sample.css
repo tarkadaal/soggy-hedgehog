@@ -1,0 +1,108 @@
+body {
+	font-family: 'Roboto', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: 'Montserrat', sans-serif;
+    color: firebrick;
+    margin-left: 20px;
+}
+
+h1 {
+	font-size: 2.25em;
+}
+
+h2 {
+	font-size: 2em;
+}
+
+p {
+	margin-left: 20px
+}
+
+.typename {
+	font-family: 'Montserrat', sans-serif;
+	color: crimson;
+	font-size: 1.8em;
+}
+
+.description{}
+
+.properties{
+	color: darkred;
+	font-weight: bold;
+}
+
+.property-name {
+	margin-left: 20px;
+	font-style: italic;
+}
+
+.property-type {
+	margin-left: 20px;
+	color: lightgray;
+}
+
+.endpoint {
+	margin-left: 20px;
+	background-color: rgba(0,0,0,0.05);
+}
+
+.endpoint-name {
+	font-family: 'Montserrat', sans-serif;
+	color: crimson;
+	font-size: 1.8em;
+}
+
+.http-get {
+	margin-left: 20px;
+	background-color: rgba(60,180,0,0.25);
+}
+
+.http-get-label { 
+	font-family: 'Montserrat', sans-serif;
+	color: crimson;
+	font-size: 1.3em;
+}
+
+.parameters {
+	color: darkred;
+	font-weight: bold;
+}
+
+.parameter-name {
+	margin-left: 20px;
+	font-style: italic;
+}
+
+.parameter-type {
+	margin-left: 20px;
+	color: gray;
+}
+
+.responses {
+	color: darkred;
+	font-weight: bold;
+}
+
+.response-code {
+	margin-left: 40px;
+}
+
+.body {
+	margin-left: 60px;
+}
+
+.mimetype{
+	margin-left: 80px;
+}
+
+.user-type-name {
+	margin-left: 100px;
+	font-style: italic;
+}
+
+.user-type {
+	margin-left: 20px;
+	font-weight: bold;
+}

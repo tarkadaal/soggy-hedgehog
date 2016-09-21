@@ -1,4 +1,6 @@
 defmodule SoggyHedgehog do
+  alias SoggyHedgehog.Raml
+  alias SoggyHedgehog.HtmlOutput
   use Application
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
@@ -16,5 +18,36 @@ defmodule SoggyHedgehog do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: SoggyHedgehog.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  def main(args) do
+    option_spec = [raml_path: :string, template_path: :string]
+    options = OptionParser.parse(args, strict: option_spec)
+    start_parse options
+  end
+
+  defp start_parse({[raml_path: raml_path, template_path: template_path],_,_}) do
+    start_parse(raml_path, template_path, File.exists?(raml_path), File.exists?(template_path))
+  end
+
+  defp start_parse(_) do
+    IO.puts "Invalid options."
+  end
+
+  defp start_parse(raml_path, template_path, true, true) do
+    raml_path |> File.read! |> Raml.parse |> _start_parse(template_path)
+  end
+
+  defp start_parse(_,_,_,_) do
+    IO.puts "Invalid options."
+  end
+
+  defp _start_parse({:ok, raml}, template_path) do
+    output = HtmlOutput.render raml, template_path
+    IO.puts output
+  end
+
+  defp _start_parse({:error, message}, _) do
+    IO.puts message
   end
 end
