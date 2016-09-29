@@ -148,10 +148,38 @@ defmodule SoggyHedgehogRamlTest do
     assert data["types:"]["Broadcast:"]["properties:"]["summary:"] == "string"
     assert data["types:"]["Broadcast:"]["properties:"]["deleted:"] == "number"
 
-    assert Map.has_key? data, "/broadcasts:"
-    assert map_size(data["/broadcasts:"]) == 2
-    assert data["/broadcasts:"]["get:"]["queryParameters:"]["startDate:"]["type:"] == "datetime"
+    assert Map.has_key? data, "endpoints:"
+    assert Map.has_key? data["endpoints:"], "/broadcasts:"
+    assert map_size(data["endpoints:"]["/broadcasts:"]) == 2
+    assert data["endpoints:"]["/broadcasts:"]["get:"]["queryParameters:"]["startDate:"]["type:"] == "datetime"
     
+  end
+
+  test "consolidate endpoints" do
+    testdata = %{
+      "bill" => 7, 
+      "chips" => "la la", 
+      "/pie:" => %{}, 
+      "nothing" => nil, 
+      "/chips:" => %{
+        "dave" => 1,
+        "/holly:" => %{},
+        "cat" => 2
+      }
+    }
+    result = SoggyHedgehog.Raml.consolidate_endpoints testdata
+    assert Map.has_key? result, "bill"
+    assert Map.has_key? result, "chips"
+    assert Map.has_key? result, "endpoints:"
+    assert Map.has_key? result["endpoints:"], "/pie:"
+    assert Map.has_key? result["endpoints:"], "/chips:"
+    assert !Map.has_key? result, "/pie:"
+    assert !Map.has_key? result, "/chips:"
+    assert Map.has_key? result["endpoints:"]["/chips:"], "dave"
+    assert Map.has_key? result["endpoints:"]["/chips:"], "cat"
+    assert !Map.has_key? result["endpoints:"]["/chips:"], "/holly:"
+    assert Map.has_key? result["endpoints:"]["/chips:"], "endpoints:"
+    assert Map.has_key? result["endpoints:"]["/chips:"]["endpoints:"], "/holly:"
   end
 
 end

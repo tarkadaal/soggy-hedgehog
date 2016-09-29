@@ -45,7 +45,7 @@ p {
 
 .endpoint {
 	margin-left: 20px;
-	background-color: rgba(0,0,0,0.05);
+	background-color: rgba(0,0,0,0.04);
 }
 
 .endpoint-name {
@@ -59,7 +59,23 @@ p {
 	background-color: rgba(60,180,0,0.25);
 }
 
-.http-get-label { 
+.http-post {
+	margin-left: 20px;
+	background-color: rgba(0,80,180,0.25);
+}
+
+
+.http-put {
+	margin-left: 20px;
+	background-color: rgba(220,200,0,0.25);
+}
+
+.http-delete {
+	margin-left: 20px;
+	background-color: rgba(220,30,0,0.25);
+}
+
+.http-verb-label { 
 	font-family: 'Montserrat', sans-serif;
 	color: crimson;
 	font-size: 1.3em;

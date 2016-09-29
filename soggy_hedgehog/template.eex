@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="sample.css">
-		<link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?familyb=Montserrat|Roboto" rel="stylesheet">
 		<title>
 			<%= data["title:"] %>
 		</title>
@@ -10,61 +10,30 @@
 		<h1><%= data["title:"] %></h1>
 		<h5>BaseURI: <%= data["baseUri:"]%></h5>
 		<h2>Types</h2>
-			<%= for key <- Map.keys(data["types:"]) do %>
-				<% 
-					sane_key = String.trim(key, ":")
-					type = data["types:"][key]
-				 %>
-				<p class="typename" id="<%=sane_key%>"><%= sane_key %></p>
+			<%= if Map.has_key?(data, "types:") do %>
+				<%= for key <- Map.keys(data["types:"]) do %>
+					<% 
+						sane_key = String.trim(key, ":")
+						type = data["types:"][key]
+					 %>
+					<p class="typename" id="<%=sane_key%>"><%= sane_key %></p>
 
-				<%= if Map.has_key?(type, "description:") do %>
-				<p class="description">
-					This represents a broadcast that either has been or will be sent to a customer.
-				</p><%end%>
+					<%= if Map.has_key?(type, "description:") do %>
+					<p class="description">
+						This represents a broadcast that either has been or will be sent to a customer.
+					</p><%end%>
 
-				<p class="properties">Properties</p>
+					<p class="properties">Properties</p>
 
-				<%= for prop <- Map.keys(type["properties:"]) do %>
-					<p class="property"><span class="property-name"><%=prop%></span><span class="property-type"><%=type["properties:"][prop]%></span></p>
+					<%= for prop <- Map.keys(type["properties:"]) do %>
+						<p class="property"><span class="property-name"><%=prop%></span><span class="property-type"><%=type["properties:"][prop]%></span></p>
+					<% end %>
 				<% end %>
 			<% end %>
 		<h2>Endpoints</h2>
-		<div class="endpoint">
-			<p class="endpoint-name">/broadcasts</p>
-			<div class="http-get">
-				<p class="http-verb-label">get</p>
-				<p class="parameters">Parameters</p>
-				<p><span class="parameter-name">tag</span><span class="parameter-type">string</span></p>
-				<p><span class="parameter-name">page</span><span class="parameter-type">integer</span></p>
-				<p class="responses">Responses</p>
-				<p class="response-code">200</p>
-				<p class="body">body</p>
-				<p class="mimetype">application/json</p>
-				<p><span class="user-type-name">type</span><span class="user-type"> <a href="#broadcast">Broadcast[]</a></span></p>
-				<p class="response-code">400</p>
-			</div>
-			<div class="http-post">
-				<p class="http-verb-label">post</p>
-				<p class="body">body</p>
-				<p class="mimetype">application/json</p>
-				<p><span class="user-type-name"> type</span><span class="user-type"><a href="#broadcast">Broadcast</a></span></p>
-			</div>
 
-			<div class="endpoint">
-				<p class="endpoint-name">/{id}</p>
-				<div class="http-put">
-					<p class="http-verb-label">put</p>
-					<p class="body">body</p>
-					<p class="mimetype">application/json</p>
-					<p><span class="user-type-name">type</span><span class="user-type"><a href=#broadcast>Broadcast</a></span></p>
-				</div>
-				<div class="http-delete">
-					<p class="http-verb-label">delete</p>
-					<p class="responses">Responses</p>
-					<p class="response-code">200</p>
-				</div>
-			</div>
 
-		</div>
+		<%= SoggyHedgehog.HtmlOutput.render_endpoints(data["endpoints:"]) %>
+
 	</body>
 </html>

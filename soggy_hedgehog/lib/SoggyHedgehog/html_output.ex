@@ -1,10 +1,16 @@
 defmodule SoggyHedgehog.HtmlOutput do
+	require EEx
+	@main_template "template.eex"
+	@endpoint_template "endpoint.eex"
 
-	def render(nil, _) do
+	EEx.function_from_file :defp, :_render, @main_template, [:data]
+	EEx.function_from_file :def, :render_endpoints, @endpoint_template, [:map]
+
+	def render(nil) do
 		nil
 	end
 
-	def render(data, template_path) do
-		EEx.eval_file template_path, [data: data]
+	def render(data) do
+		_render data
 	end
 end

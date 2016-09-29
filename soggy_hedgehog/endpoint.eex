@@ -1,0 +1,57 @@
+<%= if is_map map do %>
+	<%= for endpoint <- Map.keys(map) do %>
+		<div class="endpoint">
+		<p class="endpoint-name"><%= endpoint %></p>
+		<%= for verbname <- Map.keys(map[endpoint]) do %>
+			<% verb = map[endpoint][verbname] %>
+			<%= cond do %>
+				<%= verbname == "get:" -> %>
+					<div class="http-get">
+						<p class="http-verb-label">get</p>
+						<p class="parameters">Parameters</p>
+						<% queryParameters = if Map.has_key?(verb, "queryParameters:"), do: verb["queryParameters:"], else: %{}%>
+						<%= for parameter <- Map.keys(queryParameters) do %>
+							<p>
+								<span class="parameter-name"><%= parameter %></span>
+								<span class="parameter-type"><%= queryParameters[parameter]["type:"] %></span>
+							</p>
+						<% end %>
+						<p class="responses">Responses</p>
+						<p class="response-code">200</p>
+						<p class="body">body</p>
+						<p class="mimetype">application/json</p>
+						<p><span class="user-type-name">type</span><span class="user-type"> <a href="#broadcast">Broadcast[]</a></span></p>
+						<p class="response-code">400</p>
+					</div>
+				<%= verbname == "post:" -> %>
+					<div class="http-post">
+						<p class="http-verb-label">post</p>
+						<p class="body">body</p>
+						<p class="mimetype">application/json</p>
+						<%typename = verb["body:"]["application/json:"]["type:"]%>
+						<p><span class="user-type-name"> type</span><span class="user-type"><a href="#<%=typename%>"><%=typename%></a></span></p>
+					</div>
+				<%= verbname == "put:" -> %>
+					<div class="http-put">
+						<p class="http-verb-label">put</p>
+						<p class="body">body</p>
+						<p class="mimetype">application/json</p>
+						<%typename = verb["body:"]["application/json:"]["type:"]%>
+						<p><span class="user-type-name">type</span><span class="user-type"><a href="#<%=typename%>"><%=typename%></a></span></p>
+					</div>
+				<%= verbname == "delete:" -> %>
+					<div class="http-delete">
+						<p class="http-verb-label">delete</p>
+						<p class="responses">Responses</p>
+						<p class="response-code">200</p>
+					</div>
+				<%= true -> %>
+			<% end %>
+		<% end %>
+
+		<%= if Map.has_key?(map[endpoint], "endpoints:") do
+				SoggyHedgehog.HtmlOutput.render_endpoints(map[endpoint]["endpoints:"])
+			end %>
+		</div>
+	<% end %>
+<% 	end  %>

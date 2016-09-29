@@ -21,29 +21,25 @@ defmodule SoggyHedgehog do
   end
 
   def main(args) do
-    option_spec = [raml_path: :string, template_path: :string]
+    option_spec = [raml_path: :string]
     options = OptionParser.parse(args, strict: option_spec)
     start_parse options
   end
 
-  defp start_parse({[raml_path: raml_path, template_path: template_path],_,_}) do
-    start_parse(raml_path, template_path, File.exists?(raml_path), File.exists?(template_path))
+  defp start_parse({[raml_path: raml_path],_,_}) do
+    start_parse(raml_path, File.exists?(raml_path))
   end
 
   defp start_parse(_) do
     IO.puts "Invalid options."
   end
 
-  defp start_parse(raml_path, template_path, true, true) do
-    raml_path |> File.read! |> Raml.parse |> _start_parse(template_path)
+  defp start_parse(raml_path, true) do
+    raml_path |> File.read! |> Raml.parse |> _start_parse()
   end
 
-  defp start_parse(_,_,_,_) do
-    IO.puts "Invalid options."
-  end
-
-  defp _start_parse({:ok, raml}, template_path) do
-    output = HtmlOutput.render raml, template_path
+  defp _start_parse({:ok, raml}) do
+    output = HtmlOutput.render raml
     IO.puts output
   end
 

@@ -4,14 +4,14 @@ defmodule SoggyHedgehog.Raml do
   end
 
   def parse(text) do
-    lines = text 
+    data = text 
             |> String.split("\n") 
             |> Enum.map(&(String.replace_leading(&1, "  ", "\t"))) # replace with tabs, so we keep indentation, but can still split on spaces
             |> Enum.map(&(String.split(&1, " ", parts: 2)))
-    {:ok, _parse(lines)}
+            |> _parse
+            |> consolidate_endpoints
+    {:ok, data}
   end
-
-
 
   defp _parse(lines, state \\ [], data \\ %{})
 
@@ -36,6 +36,24 @@ defmodule SoggyHedgehog.Raml do
     value = String.trim value
     data = put_in_safely(data, Enum.reverse([key | state]), value)
     _parse(lines, state, data)
+  end
+
+
+  def consolidate_endpoints(map) do
+    map 
+      |> Map.keys 
+      |> Enum.filter(fn x -> String.starts_with?(x, "/") end) 
+      |> consolidate_endpoints(map)
+  end
+
+  defp consolidate_endpoints([], map) do
+    map
+  end
+
+  defp consolidate_endpoints([key | keylist], map) do
+    map = put_in_safely(map, ["endpoints:", key], consolidate_endpoints(map[key])) 
+      |> Map.delete(key)
+    consolidate_endpoints(keylist, map)
   end
 
 
