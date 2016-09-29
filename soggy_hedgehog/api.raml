@@ -1,9 +1,9 @@
 #%RAML 1.0
-title: New Control API
+title: New Fantastic API
 version: v1
 baseUri: http://localhost
 types:
-  Broadcast:
+  BlobRecord:
     type: object
     properties:
       id: number
@@ -11,29 +11,6 @@ types:
       summary: string
       deleted: number
       live: number
-      ipadioref: string
-      latitude: string
-      longitude: number
-      postcode: string
-      isPublic: boolean
-      showOnChannel: number
-      showOnEmbed: number
-      allowComments: number
-      emailComments: number
-      mp3Filename: string
-      mp3Location:  string
-      duration: number
-      mp3FilenameOrig: string
-      mp3LocationOrig: string
-      mp3DurationOrig: number 
-      autoTranscript: string
-      autoTags: string
-      locationText: string
-      titleSource: string
-      tagSource: string
-      summarySource: string
-      documents: Document[]
-      comments: Comment[]
   Document:
     type: object
     properties:
@@ -42,7 +19,7 @@ types:
     type: object
     properties:
       fixme: string
-  Channel:
+  DataStream:
     type: object
     properties:
       fixme: string
@@ -58,13 +35,9 @@ types:
     type: object
     properties:
       data: string # base64 encoded data
-  CommsSchedule:
-    type: object
-    properties:
-      fixme: string
 
 
-/broadcasts:
+/blobrecords:
   get:
     queryParameters:
       tag:
@@ -89,17 +62,17 @@ types:
       200:
         body:
           application/json:
-            type: Broadcast[]
+            type: BlobRecord[]
   post:
     body:
       application/json:
-        type: Broadcast
+        type: BlobRecord
   /{id}:
     delete:
     put:
       body:
         application/json:
-          type: Broadcast
+          type: BlobRecord
     get:
       queryParameters:
         startDate:
@@ -108,17 +81,11 @@ types:
           type: datetime
         showPrivate:
           type: boolean
-        videoFormat:
-          type: string
-        lockRequired:
-          type: boolean
-        lockLengthMinutes:
-          type: integer
       responses:
         200:
           body:
             application/json:
-              type: Broadcast
+              type: BlobRecord
     /interactions:
       get:
         queryParameters:
@@ -138,7 +105,7 @@ types:
           200:
             body:
               application/json:
-                type: [Interaction]
+                type: Interaction[]
     /togglelock:
       get:
         responses:
@@ -160,20 +127,8 @@ types:
             body:
               application/json:
                 type: Audit
-    /commsschedule:
-      get:
-        queryParameters:
-          page:
-            type: integer
-          items:
-            type: integer
-        responses:
-          200:
-            body:
-              application/json:
-                type: CommsSchedule
 
-/channels:
+/datastreams:
   get:
     queryParameters:
       imageWidth:
@@ -184,12 +139,11 @@ types:
       200:
         body:
           application/json:
-            type: Channel[]
+            type: DataStream[]
   post:
     body:
       application/json:
-        type:
-          Channel
+        type: DataStream
   /{id}:
     delete:
     get:
@@ -204,8 +158,8 @@ types:
         200:
           body:
             application/json:
-              type: Channel
+              type: DataStream
     put:
       body:
         application/json:
-          type: Channel
+          type: DataStream

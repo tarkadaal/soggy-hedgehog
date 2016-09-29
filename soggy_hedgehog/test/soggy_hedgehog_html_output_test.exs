@@ -22,4 +22,47 @@ defmodule SoggyHedgehogHtmlOutputTest do
 		assert result == "http://www.ce.com"
 	end
 
+      # responses:
+      #   200:
+      #     body:
+      #       application/json:
+      #         type: Broadcast
+
+
+	test "response santization" do
+		data = %{
+			"responses:" => %{
+				"200:" => %{
+					"body:" => %{
+						"application/json:" => %{
+							"type:" => "Broadcast"
+						}
+					}
+				},
+				"400:" => %{}
+			}
+		}
+
+		result = SoggyHedgehog.HtmlOutput.sanitize_responses data
+		assert length(result) > 0
+		[x|result] = result
+
+		assert x.response_code =="200"
+		assert x.body =="body"
+		assert x.mime_type == "application/json"
+		assert x.user_type == "Broadcast"
+
+		[x|result] = result
+		assert x.response_code == "400"
+
+	end
+
+	test "sanitize_typename" do
+		result = SoggyHedgehog.HtmlOutput.sanitize_typename "Broadcast"
+		assert result == "Broadcast"
+
+		result = SoggyHedgehog.HtmlOutput.sanitize_typename "Channel[]"
+		assert result == "Channel"
+	end
+
 end

@@ -17,11 +17,14 @@
 							</p>
 						<% end %>
 						<p class="responses">Responses</p>
-						<p class="response-code">200</p>
-						<p class="body">body</p>
-						<p class="mimetype">application/json</p>
-						<p><span class="user-type-name">type</span><span class="user-type"> <a href="#broadcast">Broadcast[]</a></span></p>
-						<p class="response-code">400</p>
+						<%= for response <- SoggyHedgehog.HtmlOutput.sanitize_responses(verb) do %>
+							<p class="response-code"><%= response.response_code %></p>
+							<p class="body"><%= response.body %></p>
+							<p class="mimetype"><%= response.mime_type %></p>
+							<p><span class="user-type-name">type</span><span class="user-type"> 
+							<a href="#<%= SoggyHedgehog.HtmlOutput.sanitize_typename response.user_type %>"><%= response.user_type %></a></span></p>
+						<% end %>
+
 					</div>
 				<%= verbname == "post:" -> %>
 					<div class="http-post">
@@ -29,7 +32,8 @@
 						<p class="body">body</p>
 						<p class="mimetype">application/json</p>
 						<%typename = verb["body:"]["application/json:"]["type:"]%>
-						<p><span class="user-type-name"> type</span><span class="user-type"><a href="#<%=typename%>"><%=typename%></a></span></p>
+						<p><span class="user-type-name"> type</span><span class="user-type">
+						<a href="#<%= SoggyHedgehog.HtmlOutput.sanitize_typename typename %>"><%=typename%></a></span></p>
 					</div>
 				<%= verbname == "put:" -> %>
 					<div class="http-put">
@@ -37,7 +41,8 @@
 						<p class="body">body</p>
 						<p class="mimetype">application/json</p>
 						<%typename = verb["body:"]["application/json:"]["type:"]%>
-						<p><span class="user-type-name">type</span><span class="user-type"><a href="#<%=typename%>"><%=typename%></a></span></p>
+						<p><span class="user-type-name">type</span><span class="user-type">
+						<a href="#<%= SoggyHedgehog.HtmlOutput.sanitize_typename typename %>"><%=typename%></a></span></p>
 					</div>
 				<%= verbname == "delete:" -> %>
 					<div class="http-delete">
